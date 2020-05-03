@@ -1,7 +1,6 @@
 import requests
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, RIOT_API_KEY
 import time
-import pandas as pd
 import pymysql
 import json
 
