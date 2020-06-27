@@ -14,19 +14,20 @@ conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER,
 
 sql = (
     "select JSON_EXTRACT(matches,'$.gameDuration') as `gameDuration`,"
-    "JSON_EXTRACT(matches,'$.teams[*].win') as win, "
+    "JSON_EXTRACT(matches,'$.participants[*].stats.win') as win,  "
     "JSON_EXTRACT(matches,'$.teams[*].firstBaron') as `firstBaron`,"
     "JSON_EXTRACT(matches,'$.participants[*].stats.goldEarned') as `goldEarned`,"
     "JSON_EXTRACT(matches,'$.participants[*].stats.champLevel') as champLevel, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.kills') as `kill`, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.assists') as `assist` , "
-    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death` from `match` LIMIT 0,1"
+    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death` from `match` LIMIT 0,1000"
 );
+
 cursor = conn.cursor()
 cursor.execute(sql)
 result = cursor.fetchall()
 
-N = 10000
+N = 1000
 M = 9
 
 ret = np.zeros(N*10*M).reshape(N*10,M)
@@ -39,9 +40,13 @@ for i in range(0,N):
         if j == 0 : 
             for k in range(0,10):
                 ret[i*10+k][j] = result[i][j]
+        elif j <=1:
+            for k in range(0,10):
+                if retl[k] == 'false': ret[i*10+k][j] = 0
+                else : ret[i*10+k][j] = 1
         elif j <= 2 : 
             for k in range(0,10):
-                if retl[int(k<5)] == 'false' or retl[int(k<5)] == '"Fail"': ret[i*10+k][j] = 0
+                if retl[int(k<5)] == 'false' : ret[i*10+k][j] = 0
                 else : ret[i*10+k][j] = 1
         elif j <= 4:
             tmp = np.arange(2)
@@ -63,3 +68,4 @@ with open('data.pkl', 'wb') as f:
     pickle.dump(ret, f)
 with open('data.pkl', 'rb') as f:
     params = pickle.load(f)
+    print(params.shape)
