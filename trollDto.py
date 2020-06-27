@@ -75,9 +75,10 @@ tmp = np.zeros((N-1)*(M-1)).reshape((N-1),(M-1))
 for i in range(0,10*N):
     if ret[i][8] == 1.0 and ret[i][1] == 0.0:
         for j in range(0,M-1):
-            tmp[idx][j] = ret[i][j]
+            if j==M-2 : tmp[idx][j] = ret[i][j+1]
+            else : tmp[idx][j] = ret[i][j]
         idx+=1
         
-print(tmp.shape)
+print(tmp)
 with open('trollData.pkl', 'wb') as f:
     pickle.dump(tmp, f)
