@@ -1,4 +1,7 @@
 import pandas as pd
+import requests
+import re
+from bs4 import BeautifulSoup
 import json
 import pymysql
 import pickle
@@ -6,7 +9,7 @@ import time
 import numpy as np
 import sys
 import os
-
+from crawling import Trim 
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
 
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
@@ -20,20 +23,27 @@ sql = (
     "JSON_EXTRACT(matches,'$.participants[*].stats.champLevel') as champLevel, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.kills') as `kill`, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.assists') as `assist` , "
-    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death` from `match` LIMIT 0,1000"
+    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death`, "
+    "JSON_EXTRACT(matches,'$.participantIdentities[*].player.summonerName') as `summonerName` from `match` LIMIT 0,1000"
 );
+
 cursor = conn.cursor()
 cursor.execute(sql)
 result = cursor.fetchall()
+summonerName = "패함"
+
+winRate = Trim(summonerName)
+print(winRate)
 
 N = 1000
-M = 9
+M = 10
 
 ret = np.zeros(N*10*M).reshape(N*10,M)
 
 for i in range(0,N):
     for j in range(0,M):       
         if j!=M-1 : retl = result[i][j][1:-1].split(", ")
+        print(result[i][j])
         killassistTeam = np.arange(2)
         killassistTeam[0] = killassistTeam[1] = 0
         if j == 0 : 

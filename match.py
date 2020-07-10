@@ -10,8 +10,9 @@ curs = conn.cursor()
 insertSql = "REPLACE INTO `trollMatch` (gameId,matches,timelines) VALUES (%s, %s, %s) "
 
 RECENTMATCHCNT = 20
-SEASON = 13
-QUEUE = 420
+SEASON = 13 #
+#420 솔랭 , 430 일겜
+QUEUE = 420 
 initURL = 'https://kr.api.riotgames.com'
 
 accountId = '1rsGJq_S2kSTQ-I3myielZCe1aW-avXTlQ_2-hC1v5WF-7d9bC2-6tLo'
