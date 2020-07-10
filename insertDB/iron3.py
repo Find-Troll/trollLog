@@ -1,6 +1,10 @@
 import requests
+import sys,os
+sys.path.append(os.pardir) #현재 경로 폴더 추가
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))) #상위 폴더 path추가
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, RIOT_API_KEY
 import time
+import pandas as pd
 import pymysql
 import json
 
@@ -13,10 +17,10 @@ sql = "REPLACE INTO `users` (accountId,summoner,league) VALUES (%s, %s, %s)"
 initURL = 'https://kr.api.riotgames.com'
 
 def foo(page):
-    res = requests.get(initURL+'/lol/league/v4/entries/RANKED_SOLO_5x5/IRON/II?&page={0}&api_key={1}'.format(page,RIOT_API_KEY))
+    res = requests.get(initURL+'/lol/league/v4/entries/RANKED_SOLO_5x5/IRON/III?&page={0}&api_key={1}'.format(page,RIOT_API_KEY))
     while res.status_code != 200 :  #200 될 때 까지 계속 시도(timeout 걸면서)
         time.sleep(5)
-        res = requests.get(initURL+'/lol/league/v4/entries/RANKED_SOLO_5x5/IRON/II?&page={0}&api_key={1}'.format(page,RIOT_API_KEY))
+        res = requests.get(initURL+'/lol/league/v4/entries/RANKED_SOLO_5x5/IRON/III?&page={0}&api_key={1}'.format(page,RIOT_API_KEY))
 
     if len(res.json()) == 0 : return False  #모든 페이지 검사 완료 시 종료
 

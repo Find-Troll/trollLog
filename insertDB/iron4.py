@@ -1,4 +1,7 @@
 import requests
+import sys,os
+sys.path.append(os.pardir) #현재 경로 폴더 추가
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))) #상위 폴더 path추가
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, RIOT_API_KEY
 import time
 import pandas as pd
