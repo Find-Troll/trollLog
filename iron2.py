@@ -5,10 +5,10 @@ import pymysql
 import json
 
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
-                       password=MYSQL_PASSWORD, db='find_troll', charset='utf8')
+                       password=MYSQL_PASSWORD, db='FindTroll', charset='utf8')
 
 curs = conn.cursor()
-sql = "REPLACE INTO `user` (accountId,summoner,league) VALUES (%s, %s, %s)"
+sql = "REPLACE INTO `users` (accountId,summoner,league) VALUES (%s, %s, %s)"
 
 initURL = 'https://kr.api.riotgames.com'
 

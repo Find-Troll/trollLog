@@ -7,44 +7,35 @@ import json
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
                        password=MYSQL_PASSWORD, db='find_troll', charset='utf8')
 curs = conn.cursor()
-selectSql = "SELECT  accountId FROM user WHERE JSON_EXTRACT(league,'$.rank') = 'IV'"
-checkSql = "SELECT gameId from `match` WHERE gameId = (%s)"
-insertSql = "INSERT INTO `match` (gameId,matches,timelines) VALUES (%s, %s, %s) "
+insertSql = "REPLACE INTO `trollMatch` (gameId,matches,timelines) VALUES (%s, %s, %s) "
 
-RECENTMATCHCNT = 10
-SEASON = 13
-QUEUE = 420
+RECENTMATCHCNT = 20
+SEASON = 13 #
+#420 솔랭 , 430 일겜
+QUEUE = 420 
 initURL = 'https://kr.api.riotgames.com'
 
-curs.execute(selectSql)
-selectRes = json.dumps(curs.fetchall())[1:-1].split(", ")
+accountId = '1rsGJq_S2kSTQ-I3myielZCe1aW-avXTlQ_2-hC1v5WF-7d9bC2-6tLo'
+while(True):
+    res = requests.get(initURL + '/lol/match/v4/matchlists/by-account/{0}?queue={1}&season={2}&api_key={3}'.format(
+        accountId,QUEUE,SEASON,RIOT_API_KEY
+    ))
+    if res.status_code == 200 : break
+    time.sleep(2)
+matchlists = res.json()
 
-for row in selectRes: 
-    accountId = row[2:-2]
+for row in matchlists['matches'][:RECENTMATCHCNT]:
+    gameId = row['gameId']
     while(True):
-        res = requests.get(initURL + '/lol/match/v4/matchlists/by-account/{0}?queue={1}&season={2}&api_key={3}'.format(
-            accountId,QUEUE,SEASON,RIOT_API_KEY
-        ))
+        res = requests.get(initURL + '/lol/match/v4/matches/{0}?api_key={1}'.format(gameId,RIOT_API_KEY))
         if res.status_code == 200 : break
         time.sleep(2)
-    matchlists = res.json()
-
-    for row in matchlists['matches'][:RECENTMATCHCNT]:
-        gameId = row['gameId']
-        curs.execute(checkSql,(gameId))
-        if len(curs.fetchall()) != 0 : continue
-
-        while(True):
-            res = requests.get(initURL + '/lol/match/v4/matches/{0}?api_key={1}'.format(gameId,RIOT_API_KEY))
-            if res.status_code == 200 : break
-            time.sleep(2)
-        matches = res.json()
-
-        while(True):
-            res = requests.get(initURL + '/lol/match/v4/timelines/by-match/{0}?api_key={1}'.format(gameId,RIOT_API_KEY))
-            if res.status_code == 200 : break
-            time.sleep(2)
-        timelines = res.json()
-
-        curs.execute(insertSql,(gameId,json.dumps(matches),json.dumps(timelines)))
-        conn.commit()
+    matches = res.json()
+    while(True):
+        res = requests.get(initURL + '/lol/match/v4/timelines/by-match/{0}?api_key={1}'.format(gameId,RIOT_API_KEY))
+        if res.status_code == 200 : break
+        time.sleep(2)
+    timelines = res.json()
+    curs.execute(insertSql,(gameId,json.dumps(matches),json.dumps(timelines)))
+    conn.commit()
+    print("insert !")

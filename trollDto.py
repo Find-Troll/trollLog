@@ -1,7 +1,4 @@
 import pandas as pd
-import requests
-import re
-from bs4 import BeautifulSoup
 import json
 import pymysql
 import pickle
@@ -9,7 +6,7 @@ import time
 import numpy as np
 import sys
 import os
-from crawling import Trim 
+
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
 
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
@@ -17,33 +14,29 @@ conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER,
 
 sql = (
     "select JSON_EXTRACT(matches,'$.gameDuration') as `gameDuration`,"
-    "JSON_EXTRACT(matches,'$.participants[*].stats.win') as win,  "
+    "JSON_EXTRACT(matches,'$.participants[*].stats.win') as win, "
     "JSON_EXTRACT(matches,'$.teams[*].firstBaron') as `firstBaron`,"
     "JSON_EXTRACT(matches,'$.participants[*].stats.goldEarned') as `goldEarned`,"
     "JSON_EXTRACT(matches,'$.participants[*].stats.champLevel') as champLevel, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.kills') as `kill`, "
     "JSON_EXTRACT(matches,'$.participants[*].stats.assists') as `assist` , "
-    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death`, "
-    "JSON_EXTRACT(matches,'$.participantIdentities[*].player.summonerName') as `summonerName` from `match` LIMIT 0,1000"
+    "JSON_EXTRACT(matches,'$.participants[*].stats.deaths') as `death`,"
+    "JSON_EXTRACT(matches,'$.participantIdentities[*].player.accountId') as `id` from `trollMatch` "
+    
 );
-
 cursor = conn.cursor()
 cursor.execute(sql)
 result = cursor.fetchall()
-summonerName = "패함"
 
-winRate = Trim(summonerName)
-print(winRate)
-
-N = 1000
+N = 20
 M = 10
 
 ret = np.zeros(N*10*M).reshape(N*10,M)
+trollAccount = '1rsGJq_S2kSTQ-I3myielZCe1aW-avXTlQ_2-hC1v5WF-7d9bC2-6tLo'
 
 for i in range(0,N):
     for j in range(0,M):       
         if j!=M-1 : retl = result[i][j][1:-1].split(", ")
-        print(result[i][j])
         killassistTeam = np.arange(2)
         killassistTeam[0] = killassistTeam[1] = 0
         if j == 0 : 
@@ -67,14 +60,25 @@ for i in range(0,N):
         elif j<=7:
             for k in range(0,10):
                 ret[i*10+k][j] = int(retl[k])
-        else:
+        elif j<=8:
+            for k in range(0,10):
+                print(retl[k][1:-1])
+                ret[i*10+k][j] = int(retl[k][1:-1] == trollAccount)
+        elif j==M-1:
             for k in range(0,10):
                 killassistTeam[int(k<5)]+=(ret[i*10+k][5] + ret[i*10+k][6])
             for k in range(0,10):
                 ret[i*10+k][M-1] = (ret[i*10+k][5] + ret[i*10+k][6]) / max(killassistTeam[int(k<5)],1)
 
-with open('data.pkl', 'wb') as f:
-    pickle.dump(ret, f)
-with open('data.pkl', 'rb') as f:
-    params = pickle.load(f)
-    print(params.shape)
+idx=0
+tmp = np.zeros((N-1)*(M-1)).reshape((N-1),(M-1))
+for i in range(0,10*N):
+    if ret[i][8] == 1.0 and ret[i][1] == 0.0:
+        for j in range(0,M-1):
+            if j==M-2 : tmp[idx][j] = ret[i][j+1]
+            else : tmp[idx][j] = ret[i][j]
+        idx+=1
+        
+print(tmp)
+with open('trollData.pkl', 'wb') as f:
+    pickle.dump(tmp, f)
