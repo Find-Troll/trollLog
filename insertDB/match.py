@@ -1,13 +1,16 @@
 import requests
+import sys,os
+sys.path.append(os.pardir) #현재 경로 폴더 추가
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__)))) #상위 폴더 path추가
 from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, RIOT_API_KEY
 import time
 import pymysql
 import json
 
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
-                       password=MYSQL_PASSWORD, db='find_troll', charset='utf8')
+                       password=MYSQL_PASSWORD, db='FindTroll', charset='utf8')
 curs = conn.cursor()
-insertSql = "REPLACE INTO `trollMatch` (gameId,matches,timelines) VALUES (%s, %s, %s) "
+insertSql = "REPLACE INTO `trollMatches` (gameId,matches,timelines) VALUES (%s, %s, %s) "
 
 RECENTMATCHCNT = 20
 SEASON = 13 #
