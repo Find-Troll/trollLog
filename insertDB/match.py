@@ -10,7 +10,7 @@ import json
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
                        password=MYSQL_PASSWORD, db='FindTroll', charset='utf8')
 curs = conn.cursor()
-insertSql = "REPLACE INTO `trollMatches` (gameId,matches,timelines) VALUES (%s, %s, %s) "
+insertSql = "REPLACE INTO `match` (gameId,matches,timelines) VALUES (%s, %s, %s) "
 
 RECENTMATCHCNT = 20
 SEASON = 13 #
