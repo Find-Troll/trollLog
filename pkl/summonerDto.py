@@ -121,9 +121,14 @@ for row in matches:
     j+=1
 
     i+=1
-tmp = np.zeros(N*M).reshape(N,M)
-for i in range(len(most7PicksWinRate)):
-    for j in range(0,2):
-        tmp[i][j] = (most7PicksWinRate[i][j])
+
+tmp = np.zeros(N*14).reshape(N,14)
+for i in range(N):
+    idx = 0
+    for k in range(0,7):
+        for j in range(0,2):
+            tmp[i][idx] = most7PicksWinRate[k][j]
+            idx+=1
 addedArray = np.hstack((ret,tmp))
+print(addedArray.shape)
 print(addedArray)
