@@ -6,9 +6,9 @@ import pymysql
 import json
 
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
-                       password=MYSQL_PASSWORD, db='find_troll', charset='utf8')
+                       password=MYSQL_PASSWORD, db='FindTroll', charset='utf8')
 curs = conn.cursor()
-selectSql = "SELECT  accountId FROM user WHERE JSON_EXTRACT(league,'$.rank') = 'IV'"
+selectSql = "SELECT accountId FROM users WHERE JSON_EXTRACT(league,'$.rank') = 'IV'"
 checkSql = "SELECT gameId from `match` WHERE gameId = (%s)"
 insertSql = "INSERT INTO `match` (gameId,matches,timelines) VALUES (%s, %s, %s) "
 
