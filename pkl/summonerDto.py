@@ -16,7 +16,7 @@ N = 10 #게임 갯수
 M = 9 #feature 갯수
 
 accountId = json.loads(requests.get(API_HOST + '/api/user/riotSummoner',params={'summonerName' : TROLL_NAME}).json())['accountId']
-gameIndex = {'accountId' : accountId, 'queue' : '420', 'season' : '13', 'beginIndex' : '0', 'endIndex' : '10'}
+gameIndex = {'accountId' : accountId, 'queue' : '420', 'season' : '13', 'beginIndex' : '0', 'endIndex' : str(N)}
 
 matches = json.loads(requests.get(API_HOST+'/api/user/riotMatchlist',params=gameIndex).json())['matches']
 
