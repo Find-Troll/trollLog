@@ -41,4 +41,3 @@ for row in matchlists['matches'][:RECENTMATCHCNT]:
     timelines = res.json()
     curs.execute(insertSql,(gameId,json.dumps(matches),json.dumps(timelines)))
     conn.commit()
-    print("insert !")
