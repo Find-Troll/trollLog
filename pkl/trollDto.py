@@ -79,7 +79,7 @@ sql = (
 cursor = conn.cursor()
 cursor.execute(sql)
 result = cursor.fetchall()
-N = 1
+N = 20
 M = 10
 
 s_name = []
@@ -102,7 +102,7 @@ for i in range(0,N):
 
         elif j <= 2 : 
             for k in range(0,10):
-                if retl[int(k<5)] == 'false' : ret[i*10+k][j] = 0
+                if retl[int(k>=5)] == 'false' : ret[i*10+k][j] = 0
                 else : ret[i*10+k][j] = 1
 
         elif j <= 4:
@@ -122,7 +122,7 @@ for i in range(0,N):
                 ret[i*10+k][j] = int(retl[k][1:-1] == trollAccount)
         elif j==9:
             for k in range(0,10):
-                killassistTeam[int(k<5)]+=(ret[i*10+k][5] + ret[i*10+k][6])
+                killassistTeam[int(k<5)]+=ret[i*10+k][5]
             for k in range(0,10):
                 ret[i*10+k][9] = (ret[i*10+k][5] + ret[i*10+k][6]) / max(killassistTeam[int(k<5)],1)
             for k in range(0,10):
@@ -163,6 +163,9 @@ for i in range(len(s_name)):
     if(dist[1] != 0):
         is_exist[i] = True
         count_exist += 1
+    print(s_name[i])
+    print(len(dist))
+    print(dist)
     for j in range(0, 14):
         if(j%2==0): 
                 dist[j] = (dist[j])/100.0
@@ -171,10 +174,88 @@ for i in range(len(s_name)):
 
 #트롤 결정 feature들을 담은 r_data에 winRate column 추가
 addedArray = np.hstack((r_data,winRate))
-for_train = np.array([(is_exist[i] == 1) for i in range(len(is_exist)) ])
-last_data = addedArray[for_train]
+for_train = np.array([(is_exist[i] == 1) for i in range(len(is_exist)) ]) # True , False ...
 
-print(last_data)
+last_data = addedArray[for_train] # 진짜 데이터 feature 23개
 
-with open('trollData.pkl', 'wb') as f:
-    pickle.dump(tmp, f)
+last_len = len(last_data) # 진짜 데이터 길이
+
+
+# X = last_data
+# feature_num = len(X[0]) # feature 갯수
+# # list to pandas, list to pandas series
+# panda_X = pd.DataFrame(X)
+# # print(panda_X)
+# print("panda_X Shape :", panda_X.shape)
+
+# print("X dataShape : ", X.shape)
+# print("Troll dataShape : ", X_troll.shape)
+# data = StandardScaler().fit_transform(X)  # normalize 기능
+# print("DataShape : ", data.shape)
+# n_samples, n_features = data.shape
+# print("n_sample :", n_samples, end=" / ")
+# print("n_features :", n_features)
+
+# pca = PCA(n_components=feature_num)
+# pca.fit(X)
+# print("singular value :", pca.singular_values_)
+# print("singular vector :\n", pca.components_.T)
+# print("eigen_value :", pca.explained_variance_)
+# print("explained variance ratio :", pca.explained_variance_ratio_)
+# pca = PCA(n_components=0.99999)
+# X_reduced = pca.fit_transform(X)
+# print("X_redu Shape : ", X_reduced.shape)
+# print("explained variance ratio :", pca.explained_variance_ratio_)
+# print("선택한 차원수 :",pca.n_components_)
+# print(X_reduced.shape)
+
+# plt.figure(figsize=(9, 8))
+# n_clusters = 6            # 클러스터 수
+
+# X_reduced = StandardScaler().fit_transform(X_reduced)
+# X = StandardScaler().fit_transform(X)
+# two_means = MiniBatchKMeans(n_clusters=n_clusters)
+# dbscan = DBSCAN(eps=0.6)  # 밀도 기반 클러스터링
+# spectral = SpectralClustering(n_clusters=n_clusters, affinity="nearest_neighbors")
+# ward = AgglomerativeClustering(n_clusters=n_clusters)
+# affinity_propagation = AffinityPropagation(damping=0.9, preference=-200)    # 매우 느림
+# clustering_algorithms = (
+#     ('K-Means', two_means),
+#     ('DBSCAN', dbscan),
+#     ('Hierarchical Clustering', ward),
+#     ('Spectral Clustering', spectral),
+#     # ('Affinity Propagation', affinity_propagation),
+# )
+
+# plot_num = 1
+
+# for j, (name, algorithm) in enumerate(clustering_algorithms):
+#     with ignore_warnings(category=UserWarning):
+#         algorithm.fit(X_reduced)
+#     if hasattr(algorithm, 'labels_'):
+#         y_pred = algorithm.labels_.astype(np.int)
+#     else:
+#         y_pred = algorithm.predict(X_reduced)
+#     y_pred += 1
+#     plt.subplot(len(clustering_algorithms), 2, plot_num)
+#     print("y_pred :", y_pred)
+#     print("len :", len(y_pred))
+#     y_max = np.max(y_pred)
+#     print("maxnum :", np.max(y_pred))
+#     colors = plt.cm.tab10(np.arange(20, dtype=int))
+#     print("color : ", colors.shape)
+#     # s 포인트 크기, color 배열
+#     y_reduced = y_pred[:N*10]
+#     y_troll = []
+#     for i in range (0, len(X_troll)):
+#         y_troll.append(0)
+#     print("Y 트롤 : ")
+#     print(y_reduced)
+#     plt.scatter(X_reduced[:last_len,0], X_reduced[:last_len,1], s=2, color=colors[y_reduced])
+#     plt.scatter(X_reduced[lase_len:,0], X_reduced[last_len:,1], s=2, color=colors[y_troll])
+#     plt.xticks(())
+#     plt.yticks(())
+#     plot_num += 1
+
+# plt.tight_layout()
+# plt.show()
