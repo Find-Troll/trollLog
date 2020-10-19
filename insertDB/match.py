@@ -19,12 +19,14 @@ QUEUE = 420
 initURL = 'https://kr.api.riotgames.com'
 
 accountId = '1rsGJq_S2kSTQ-I3myielZCe1aW-avXTlQ_2-hC1v5WF-7d9bC2-6tLo'
+
 while(True):
     res = requests.get(initURL + '/lol/match/v4/matchlists/by-account/{0}?queue={1}&season={2}&api_key={3}'.format(
         accountId,QUEUE,SEASON,RIOT_API_KEY
     ))
     if res.status_code == 200 : break
     time.sleep(2)
+    
 matchlists = res.json()
 
 for row in matchlists['matches'][:RECENTMATCHCNT]:
