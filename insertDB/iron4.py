@@ -35,6 +35,8 @@ def foo(page):
         if 'accountId' in summonerJson: 
             curs.execute(sql,(summonerJson['accountId'],json.dumps(summonerJson),json.dumps(leagueJson)))
             conn.commit()
+        
+        
     return True
 
 page = 1
