@@ -100,7 +100,7 @@ for i in range(0,N):
 
         elif j <= 2 : 
             for k in range(0,10):
-                if retl[int(k<5)] == 'false' : ret[i*10+k][j] = 0
+                if retl[int(k>=5)] == 'false' : ret[i*10+k][j] = 0
                 else : ret[i*10+k][j] = 1
 
         elif j <= 4:
@@ -120,7 +120,7 @@ for i in range(0,N):
                 ret[i*10+k][j] = int(retl[k][1:-1] == trollAccount)
         elif j==9:
             for k in range(0,10):
-                killassistTeam[int(k<5)]+=(ret[i*10+k][5] + ret[i*10+k][6])
+                killassistTeam[int(k<5)]+=ret[i*10+k][5]
             for k in range(0,10):
                 ret[i*10+k][9] = (ret[i*10+k][5] + ret[i*10+k][6]) / max(killassistTeam[int(k<5)],1)
             for k in range(0,10):
