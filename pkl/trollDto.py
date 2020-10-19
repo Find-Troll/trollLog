@@ -15,6 +15,8 @@ from auth import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD
 conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, 
                        password=MYSQL_PASSWORD, db='FindTroll', charset='utf8')
 
+
+#소환사 이름으로 op.gg에서 crawling
 def Trim(summonerName):
     summonerName = summonerName
     source = requests.get("https://www.op.gg/summoner/userName=" + summonerName).text
@@ -144,7 +146,6 @@ for i in range(0, 10*N):
         if j==M-2 : r_data[i][j] = ret[i][j+1]
         else : r_data[i][j] = ret[i][j]
 
-#200 * 9 -> 200 * 23
 
 #한 소환사이름에 대해 1픽 당 승률, 판 수를 한 짝으로 총 7개의 짝을 구성, 최종적으로 1차원 배열(14개의 index)로 만드는 과정
 winRate = np.zeros(N*10*(14)).reshape((N*10), (14))
@@ -164,12 +165,11 @@ for i in range(len(s_name)):
         if(j%2==0): dist[j] = (dist[j])/100.0
         winRate[i][j] = dist[j]
 
-
-c = np.hstack((r_data,winRate))
+#트롤 결정 feature들을 담은 r_data에 winRate column 추가
+addedArray = np.hstack((r_data,winRate))
 for_train = np.array([(is_exist[i] == 1) for i in range(len(is_exist)) ])
 
-last_data = c[for_train]
-
+last_data = addedArray[for_train]
 
 with open('trollData.pkl', 'wb') as f:
     pickle.dump(tmp, f)
