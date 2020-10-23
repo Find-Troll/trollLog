@@ -64,6 +64,8 @@ def InsertMost7PicksWinRateDb(summonerName):
     print("inserted")
     conn.commit()
 
-InsertMost7PicksWinRateDb("행복한패배")
-
+try:
+    InsertMost7PicksWinRateDb("평택프로토스NO1")
+except:
+    print("summonerName이 없습니다.")
 

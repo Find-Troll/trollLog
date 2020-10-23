@@ -156,7 +156,9 @@ for i in range(len(s_name)):
         is_exist[i] = True
         count_exist += 1
     for j in range(0, 14):
-        if(j%2==0): dist[j] = (dist[j])/100.0
+        if(j%2==0): 
+                dist[j] = (dist[j])/100.0
+            
         winRate[i][j] = dist[j]
 
 #트롤 결정 feature들을 담은 r_data에 winRate column 추가
